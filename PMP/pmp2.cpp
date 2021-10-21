@@ -1,37 +1,35 @@
-// 8/10 evaluation
-
-#include <fstream>
 #include <iostream>
-#include <sstream>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
-void readInclude(string);
+bool readFile(string);
 
 int main(){
-	string fileName;
+	string filename;
 
-	cin >> fileName;
-	
-  	readInclude(fileName);
+	cin >> filename;
+  	readFile(filename);
 
   	return 0;
 }
 
-void readInclude(string fileName){
-	ifstream reader(fileName);
+bool readFile(string filename){
+	ifstream file(filename);
 
-	if(reader.is_open()){
-		string line;
-		
-		while(getline(reader, line)){
-			if(line.find_first_of('#') != string::npos){
-                readInclude(line.substr(line.find_first_of('"')+1, line.find_first_of('h')-line.find_first_of('"')));
-            }
-            else if(line.find_first_of('#') == string::npos){
-                cout << line << endl;
-            }
-        }
-    }
-    reader.close();
+	if(file.is_open()){
+		string lines;
+		while(getline(file, lines)){
+			if(lines.find("#include") != string::npos) {
+				string newFile = lines.substr(lines.find('"') + 1, lines.find("h") - lines.find('"'));
+				readFile(newFile);
+				continue;
+			}
+			cout << lines << endl;
+		}
+		file.close();	
+		return true;
+	}
+	return false;
 }
